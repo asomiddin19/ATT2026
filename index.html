@@ -195,8 +195,8 @@
   .auth-form .sub{ color:#51657d; font-size:13px; margin:0 0 20px; }
   .auth-field{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
   .auth-field label{ font-size:12.5px; font-weight:600; color:#7d8fa2; text-transform:uppercase; letter-spacing:.08em; }
-  .auth-field input{ background:#f9fcff; border:1px solid #dce8f0; border-radius:12px; padding:13px 14px; font-size:14px; color:#12304f; outline:none; transition:border-color .2s ease, box-shadow .2s ease; caret-color:#4e7fa8; -webkit-text-security:disc; text-security:disc; }
-  .auth-field input::placeholder{ color:transparent; }
+  .auth-field input{ background:#f9fcff; border:1px solid #dce8f0; border-radius:12px; padding:13px 14px; font-size:14px; color:#12304f; outline:none; transition:border-color .2s ease, box-shadow .2s ease; caret-color:#4e7fa8; }
+  .auth-field input::placeholder{ color:#7a8797; } .password-toggle{align-self:flex-end;border:0;background:transparent;color:#315b7d;text-decoration:underline;cursor:pointer;font:inherit;font-size:13px;padding:4px 0;} .password-toggle:focus-visible{outline:2px solid #4e7fa8;}
   .auth-field input:focus{ border-color:#4e7fa8; box-shadow:0 0 0 4px rgba(78,127,168,.12); }
   .auth-btn{ width:100%; padding:13px 16px; border-radius:12px; margin-top:6px; }
   .auth-error{ min-height:18px; margin-top:10px; color:#ef5d5d; font-size:12.5px; font-weight:600; }
@@ -348,11 +348,11 @@
         <p class="sub">Admin bergan email va parol bilan kiring. Test natijalari, kirish va sayt ichidagi faoliyat tarixi serverda saqlanadi. Qurilma soni brauzer profillari asosida hisoblanadi.</p>
         <div class="auth-field">
           <label for="login-input">Email</label>
-          <input id="login-input" type="email" inputmode="email" autocomplete="username" spellcheck="false" placeholder="">
+          <input id="login-input" type="email" inputmode="email" autocomplete="username" spellcheck="false" placeholder="Email manzilingiz">
         </div>
         <div class="auth-field">
           <label for="password-input">Parol</label>
-          <input id="password-input" type="password" inputmode="text" autocomplete="new-password" spellcheck="false" placeholder="">
+          <input id="password-input" type="password" inputmode="text" autocomplete="current-password" spellcheck="false" placeholder="Parolingiz"><button type="button" class="password-toggle" aria-controls="password-input" aria-pressed="false" onclick="togglePassword('password-input',this)">Parolni ko‘rsatish</button>
         </div>
         <button class="btn btn-primary auth-btn" onclick="handleLogin()">Kirish</button>
         <p class="auth-error" id="auth-error"></p><button class="btn" type="button" onclick="document.getElementById('registration').showModal()">Kirish uchun ro‘yxatdan o‘tish</button>
@@ -836,7 +836,10 @@ function retryQuiz(){
 }
 </script>
 <script src="./main.js"></script>
-<dialog id="registration" style="max-width:440px;width:92%;border:1px solid #c8d5e2;border-radius:14px;padding:24px"><h2>Kirish so‘rovi</h2><form id="registration-form"><div class="auth-field"><label>Ism-familiya</label><input name="name" required maxlength="120"></div><div class="auth-field"><label>Email</label><input name="email" type="email" required></div><div class="auth-field"><label>Parol (12+ belgi)</label><input name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required></div><p>Admin email egasini tekshiradi va kirishni tasdiqlaydi. Kirish va test tarixi, brauzer profili va qurilma turi platformada saqlanadi; odatda 2 ta faol brauzer profiliga ruxsat beriladi.</p><label><input name="consent" type="checkbox" required> Mazkur ma’lumotlar qayd etilishiga roziman.</label><p id="register-status" role="status"></p><button class="btn btn-primary">So‘rov yuborish</button> <button class="btn" type="button" onclick="document.getElementById('registration').close()">Yopish</button></form></dialog><script>
+<dialog id="registration" style="max-width:440px;width:92%;border:1px solid #c8d5e2;border-radius:14px;padding:24px"><h2>Kirish so‘rovi</h2><form id="registration-form"><div class="auth-field"><label>Ism-familiya</label><input name="name" required maxlength="120"></div><div class="auth-field"><label>Email</label><input name="email" type="email" required></div><div class="auth-field"><label>Parol (12+ belgi)</label><input id="registration-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><button type="button" class="password-toggle" aria-controls="registration-password" aria-pressed="false" onclick="togglePassword('registration-password',this)">Parolni ko‘rsatish</button></div><p>Admin email egasini tekshiradi va kirishni tasdiqlaydi. Kirish va test tarixi, brauzer profili va qurilma turi platformada saqlanadi; odatda 2 ta faol brauzer profiliga ruxsat beriladi.</p><label><input name="consent" type="checkbox" required> Mazkur ma’lumotlar qayd etilishiga roziman.</label><p id="register-status" role="status"></p><button class="btn btn-primary">So‘rov yuborish</button> <button class="btn" type="button" onclick="document.getElementById('registration').close()">Yopish</button></form></dialog><script>
 document.getElementById('registration-form').addEventListener('submit',async e=>{e.preventDefault();const form=e.target,data=Object.fromEntries(new FormData(form));data.consent=form.elements.consent.checked;const status=document.getElementById('register-status');try{const r=await api('/api/register','POST',data);status.textContent=r.message;form.reset()}catch(err){status.textContent=err.message}});
+</script><script>
+function togglePassword(id,button){const field=document.getElementById(id),visible=field.type==='password';field.type=visible?'text':'password';button.textContent=visible?'Parolni yashirish':'Parolni ko‘rsatish';button.setAttribute('aria-pressed',String(visible));}
+document.getElementById('registration').addEventListener('close',()=>{const field=document.getElementById('registration-password');if(field.type!=='password')togglePassword('registration-password',document.querySelector('[aria-controls="registration-password"]'));});
 </script></body>
 </html>
