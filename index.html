@@ -534,7 +534,8 @@ function loadBestScores(){return serverScores;}
 function saveBestScore(quizId,pct){serverScores[quizId]=Math.max(serverScores[quizId]||0,pct);}
 async function api(path,method='GET',data){
  const response=await fetch(path,{method,headers:{'Content-Type':'application/json','X-ATT-Request':'1'},...(data===undefined?{}:{body:JSON.stringify(data)})});
- const result=await response.json();if(!response.ok)throw Error(result.error||'Server bilan aloqa xatosi');return result;
+ if(!(response.headers.get('content-type')||'').includes('application/json'))throw Error('Server vaqtincha javob bermadi (HTTP '+response.status+'). 30–60 soniya kutib qayta urinib ko‘ring.');
+ const result=await response.json();if(!response.ok)throw Error(result.error||'Server bilan aloqa xatosi (HTTP '+response.status+')');return result;
 }
 let currentAttempt=null;
 let starting=false;
@@ -837,7 +838,7 @@ function retryQuiz(){
 </script>
 <script src="./main.js"></script>
 <dialog id="registration" style="max-width:440px;width:92%;border:1px solid #c8d5e2;border-radius:14px;padding:24px"><h2>Kirish so‘rovi</h2><form id="registration-form"><div class="auth-field"><label>Ism-familiya</label><input name="name" required maxlength="120"></div><div class="auth-field"><label>Email</label><input name="email" type="email" required></div><div class="auth-field"><label>Parol (12+ belgi)</label><input id="registration-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><button type="button" class="password-toggle" aria-controls="registration-password" aria-pressed="false" onclick="togglePassword('registration-password',this)">Parolni ko‘rsatish</button></div><p>Admin email egasini tekshiradi va kirishni tasdiqlaydi. Kirish va test tarixi, brauzer profili va qurilma turi platformada saqlanadi; odatda 2 ta faol brauzer profiliga ruxsat beriladi.</p><label><input name="consent" type="checkbox" required> Mazkur ma’lumotlar qayd etilishiga roziman.</label><p id="register-status" role="status"></p><button class="btn btn-primary">So‘rov yuborish</button> <button class="btn" type="button" onclick="document.getElementById('registration').close()">Yopish</button></form></dialog><script>
-document.getElementById('registration-form').addEventListener('submit',async e=>{e.preventDefault();const form=e.target,data=Object.fromEntries(new FormData(form));data.consent=form.elements.consent.checked;const status=document.getElementById('register-status');try{const r=await api('/api/register','POST',data);status.textContent=r.message;form.reset()}catch(err){status.textContent=err.message}});
+document.getElementById('registration-form').addEventListener('submit',async e=>{e.preventDefault();const form=e.target,data=Object.fromEntries(new FormData(form));data.consent=form.elements.consent.checked;const status=document.getElementById('register-status'),submit=form.querySelector('button:not([type=button])');if(submit.disabled)return;submit.disabled=true;status.textContent='So‘rov yuborilmoqda…';try{const r=await api('/api/register','POST',data);status.textContent=r.message;form.reset()}catch(err){status.textContent=err.message}finally{submit.disabled=false}});
 </script><script>
 function togglePassword(id,button){const field=document.getElementById(id),visible=field.type==='password';field.type=visible?'text':'password';button.textContent=visible?'Parolni yashirish':'Parolni ko‘rsatish';button.setAttribute('aria-pressed',String(visible));}
 document.getElementById('registration').addEventListener('close',()=>{const field=document.getElementById('registration-password');if(field.type!=='password')togglePassword('registration-password',document.querySelector('[aria-controls="registration-password"]'));});
