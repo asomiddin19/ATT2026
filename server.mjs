@@ -41,29 +41,58 @@ const wrap=fn=>(req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);
 const activity=(uid,kind,detail='')=>query('INSERT INTO activity(user_id,kind,detail) VALUES($1,$2,$3)',[uid,kind,detail]);
 const auth=wrap(async(req,res,next)=>{const t=cookie(req,'att_session');if(!t)return req.path==='/admin'?res.redirect('/'):res.status(401).json({error:'Hisobga kiring'});const result=await query('SELECT u.id,u.email,u.name,u.role,u.is_owner,u.permissions,s.device_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires>now() AND u.active',[hash(t)]);if(!result.rowCount)return req.path==='/admin'?res.redirect('/'):res.status(401).json({error:'Sessiya tugagan'});req.user=result.rows[0];await query('UPDATE devices SET last_seen=now() WHERE id=$1 AND last_seen < now()-interval \'30 seconds\'',[req.user.device_id]);next()});
 const admin=(req,res,next)=>req.user.role==='admin'?next():res.status(403).json({error:'Ruxsat yo‘q'});
-app.get('/health',wrap(async(req,res)=>{await query('SELECT 1');res.json({ok:true,release:'registration-notifications-v1',tests:bank.length,questions:bank.reduce((n,q)=>n+q.questions.length,0)})}));
+app.get('/health',wrap(async(req,res)=>{await query('SELECT 1');res.json({ok:true,release:'telegram-pairing-v2',tests:bank.length,questions:bank.reduce((n,q)=>n+q.questions.length,0)})}));
 const TELEGRAM_ADMIN_URL='https://att2026-platform.onrender.com/admin';
-function telegramConfigured(){return /^\d+:[A-Za-z0-9_-]+$/.test(process.env.TELEGRAM_BOT_TOKEN||'')&&/^-?\d+$/.test(process.env.TELEGRAM_CHAT_ID||'');}
-async function telegramNotify(message){
- if(!telegramConfigured())return false;
+await query("CREATE TABLE IF NOT EXISTS telegram_settings(id INTEGER PRIMARY KEY CHECK(id=1),chat_id TEXT,pair_hash TEXT,pair_expires TIMESTAMPTZ); INSERT INTO telegram_settings(id) VALUES(1) ON CONFLICT DO NOTHING");
+const botConfigured=()=>/^\d+:[A-Za-z0-9_-]+$/.test(process.env.TELEGRAM_BOT_TOKEN||'');
+async function telegramChat(){const row=(await query('SELECT chat_id FROM telegram_settings WHERE id=1')).rows[0];const id=row?.chat_id||process.env.TELEGRAM_CHAT_ID||'';return /^-?\d+$/.test(id)?id:null;}
+async function telegramCall(method,body){
+ if(!botConfigured())return null;
  try{
-  const response=await fetch('https://api.telegram.org/bot'+process.env.TELEGRAM_BOT_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:process.env.TELEGRAM_CHAT_ID,text:message,disable_web_page_preview:true}),signal:AbortSignal.timeout(6500)});
+  const response=await fetch('https://api.telegram.org/bot'+process.env.TELEGRAM_BOT_TOKEN+'/'+method,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(6500)});
   const result=await response.json();
-  if(!response.ok||!result.ok){console.warn('Telegram notification not delivered: HTTP '+response.status);return false;}
-  return true;
- }catch(e){console.warn('Telegram notification request failed');return false;}
+  if(!response.ok||!result.ok){console.warn('Telegram request not delivered: HTTP '+response.status);return null;}
+  return result.result;
+ }catch(e){console.warn('Telegram request failed');return null;}
+}
+async function telegramNotify(message){
+ const chat=await telegramChat();if(!chat||!botConfigured())return false;
+ return !!await telegramCall('sendMessage',{chat_id:chat,text:message,disable_web_page_preview:true});
 }
 app.get('/api/admin/notifications',auth,admin,wrap(async(req,res)=>{
  if(!req.user.is_owner)return deny(res);
  const n=(await query('SELECT count(*) AS n FROM users WHERE pending AND NOT active')).rows[0].n;
- res.json({telegram_configured:telegramConfigured(),pending:Number(n)});
+ res.json({telegram_configured:botConfigured()&&!!await telegramChat(),bot_configured:botConfigured(),pending:Number(n)});
 }));
 app.post('/api/admin/notifications/test',auth,admin,wrap(async(req,res)=>{
  if(!req.user.is_owner)return deny(res);
- if(!telegramConfigured())return res.status(400).json({error:'Render’da TELEGRAM_BOT_TOKEN va TELEGRAM_CHAT_ID sozlanmagan'});
+ if(!botConfigured()||!await telegramChat())return res.status(400).json({error:'Bot tokeni yoki Telegram chat bog‘lanmagan'});
  const n=(await query('SELECT count(*) AS n FROM users WHERE pending AND NOT active')).rows[0].n;
- if(!await telegramNotify('✅ ATT2026 bildirishnoma sinovi\nTasdiqlash kutilayotgan so‘rovlar: '+n+'\n'+TELEGRAM_ADMIN_URL))return res.status(502).json({error:'Telegram xabari yuborilmadi. Bot tokeni, chat ID va botga /start yuborilganini tekshiring.'});
+ if(!await telegramNotify('✅ ATT2026 bildirishnoma sinovi\nTasdiqlash kutilayotgan so‘rovlar: '+n+'\n'+TELEGRAM_ADMIN_URL))return res.status(502).json({error:'Telegram xabari yuborilmadi. Bot tokeni va botga /start yuborilganini tekshiring.'});
  res.json({ok:true});
+}));
+app.post('/api/admin/notifications/pair',auth,admin,wrap(async(req,res)=>{
+ if(!req.user.is_owner)return deny(res);
+ if(!botConfigured())return res.status(400).json({error:'Render’da TELEGRAM_BOT_TOKEN sozlanmagan'});
+ const code=randomBytes(12).toString('hex');
+ await query("UPDATE telegram_settings SET pair_hash=$1,pair_expires=now()+interval '10 minutes' WHERE id=1",[hash(code)]);
+ res.json({command:'/pair@attanvarbek_bot '+code});
+}));
+app.post('/api/admin/notifications/confirm-pair',auth,admin,wrap(async(req,res)=>{
+ if(!req.user.is_owner)return deny(res);
+ const p=(await query("SELECT pair_hash FROM telegram_settings WHERE id=1 AND pair_expires>now()")).rows[0];
+ if(!p?.pair_hash)return res.status(400).json({error:'Bog‘lash kodi eskirgan. Yangi kod yarating.'});
+ const updates=await telegramCall('getUpdates',{limit:100,timeout:0,allowed_updates:['message']});
+ if(!Array.isArray(updates))return res.status(502).json({error:'Telegram bilan aloqa xatosi. Bot tokenini tekshiring.'});
+ const match=updates.map(x=>x.message).filter(Boolean).find(m=>{
+  const cmd=String(m.text||'').match(/^\/pair(?:@attanvarbek_bot)? ([a-f0-9]{24})$/i);
+  return cmd&&hash(cmd[1])===p.pair_hash&&['private','group','supergroup'].includes(m.chat?.type)&&/^-?\d+$/.test(String(m.chat?.id));
+ });
+ if(!match)return res.status(404).json({error:'Botga bog‘lash buyrug‘i hali kelmagan. Telegramga yuboring va yana tekshiring.'});
+ const result=await query("UPDATE telegram_settings SET chat_id=$1,pair_hash=NULL,pair_expires=NULL WHERE id=1 AND pair_hash=$2 AND pair_expires>now() RETURNING id",[String(match.chat.id),p.pair_hash]);
+ if(!result.rowCount)return res.status(409).json({error:'Bog‘lash kodi o‘zgargan. Qayta urinib ko‘ring.'});
+ const delivered=await telegramNotify('✅ ATT2026 admin bildirishnomalari ushbu chatga bog‘landi.\n'+TELEGRAM_ADMIN_URL);
+ res.json({ok:true,delivered});
 }));
 app.post('/api/register',rateLimit({windowMs:60*60*1000,limit:5,standardHeaders:true,legacyHeaders:false,message:{error:'So‘rovlar limiti tugadi. Bir soatdan keyin urinib ko‘ring.'}}),wrap(async(req,res)=>{
  const email=emailNorm(req.body.email),name=String(req.body.name||'').trim(),p=req.body.password;
@@ -71,7 +100,7 @@ app.post('/api/register',rateLimit({windowMs:60*60*1000,limit:5,standardHeaders:
  const r=await query("INSERT INTO users(email,name,password_hash,active,pending) VALUES($1,$2,$3,FALSE,TRUE) ON CONFLICT DO NOTHING RETURNING id",[email,name,passwordHash(p)]);
  if(r.rowCount){
   await activity(r.rows[0].id,'registration_requested','Kirish so‘rovi');
-  await telegramNotify('🔔 ATT2026: yangi kirish so‘rovi!\nAdmin panelda tasdiqlash kutilmoqda.\n'+TELEGRAM_ADMIN_URL);
+  await telegramNotify('🔔 ATT2026: yangi kirish so‘rovi!\nAdmin panelda tasdiqlash kutilmoqda.\n'+TELEGRAM_ADMIN_URL).catch(()=>console.warn('Telegram notification failed; registration saved'));
  }
  res.json({ok:true,message:'So‘rov ko‘rib chiqiladi. Yangi emailingiz bo‘lsa, u admin panelda kutilayotgan so‘rovlar ro‘yxatida ko‘rinadi. Oldin hisob ochilgan bo‘lsa, admin bilan bog‘laning.'});
 }));
