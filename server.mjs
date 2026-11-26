@@ -3,7 +3,9 @@ import pg from 'pg';
 import {randomBytes, scryptSync, timingSafeEqual, createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import rateLimit from 'express-rate-limit';
-const app=express(), db=new pg.Pool({connectionString:process.env.DATABASE_URL});
+const app=express(), db=new pg.Pool({connectionString:process.env.DATABASE_URL,connectionTimeoutMillis:10000,idleTimeoutMillis:15000});
+// Neon may close idle connections. Handle pool errors without terminating the server.
+db.on('error',err=>console.warn('Idle PostgreSQL connection closed:',err.code||err.name));
 const html=readFileSync(new URL('./index.html',import.meta.url),'utf8');
 const bank=JSON.parse(html.match(/const QUIZZES = (\[[\s\S]*?\]);\n\n\/\* =+/)[1]);
 const quizMap=new Map(bank.map(q=>[q.id,q]));
@@ -41,7 +43,7 @@ const wrap=fn=>(req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);
 const activity=(uid,kind,detail='')=>query('INSERT INTO activity(user_id,kind,detail) VALUES($1,$2,$3)',[uid,kind,detail]);
 const auth=wrap(async(req,res,next)=>{const t=cookie(req,'att_session');if(!t)return req.path==='/admin'?res.redirect('/'):res.status(401).json({error:'Hisobga kiring'});const result=await query('SELECT u.id,u.email,u.name,u.role,u.is_owner,u.permissions,s.device_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires>now() AND u.active',[hash(t)]);if(!result.rowCount)return req.path==='/admin'?res.redirect('/'):res.status(401).json({error:'Sessiya tugagan'});req.user=result.rows[0];await query('UPDATE devices SET last_seen=now() WHERE id=$1 AND last_seen < now()-interval \'30 seconds\'',[req.user.device_id]);next()});
 const admin=(req,res,next)=>req.user.role==='admin'?next():res.status(403).json({error:'Ruxsat yo‘q'});
-app.get('/health',wrap(async(req,res)=>{await query('SELECT 1');res.json({ok:true,release:'telegram-pairing-v2',tests:bank.length,questions:bank.reduce((n,q)=>n+q.questions.length,0)})}));
+app.get('/health',wrap(async(req,res)=>{await query('SELECT 1');res.json({ok:true,release:'registration-resilience-v3',tests:bank.length,questions:bank.reduce((n,q)=>n+q.questions.length,0)})}));
 const TELEGRAM_ADMIN_URL='https://att2026-platform.onrender.com/admin';
 await query("CREATE TABLE IF NOT EXISTS telegram_settings(id INTEGER PRIMARY KEY CHECK(id=1),chat_id TEXT,pair_hash TEXT,pair_expires TIMESTAMPTZ); INSERT INTO telegram_settings(id) VALUES(1) ON CONFLICT DO NOTHING");
 const botConfigured=()=>/^\d+:[A-Za-z0-9_-]+$/.test(process.env.TELEGRAM_BOT_TOKEN||'');
@@ -97,12 +99,10 @@ app.post('/api/admin/notifications/confirm-pair',auth,admin,wrap(async(req,res)=
 app.post('/api/register',rateLimit({windowMs:60*60*1000,limit:5,standardHeaders:true,legacyHeaders:false,message:{error:'So‘rovlar limiti tugadi. Bir soatdan keyin urinib ko‘ring.'}}),wrap(async(req,res)=>{
  const email=emailNorm(req.body.email),name=String(req.body.name||'').trim(),p=req.body.password;
  if(!emailValid(email)||!name||name.length>120||!passwordValid(p)||req.body.consent!==true)return res.status(400).json({error:'Ism, email, 12 belgili parol va rozilik kerak'});
- const r=await query("INSERT INTO users(email,name,password_hash,active,pending) VALUES($1,$2,$3,FALSE,TRUE) ON CONFLICT DO NOTHING RETURNING id",[email,name,passwordHash(p)]);
- if(r.rowCount){
-  await activity(r.rows[0].id,'registration_requested','Kirish so‘rovi');
-  await telegramNotify('🔔 ATT2026: yangi kirish so‘rovi!\nAdmin panelda tasdiqlash kutilmoqda.\n'+TELEGRAM_ADMIN_URL).catch(()=>console.warn('Telegram notification failed; registration saved'));
- }
+ const r=await query("WITH registered AS (INSERT INTO users(email,name,password_hash,active,pending) VALUES($1,$2,$3,FALSE,TRUE) ON CONFLICT DO NOTHING RETURNING id), logged AS (INSERT INTO activity(user_id,kind,detail) SELECT id,'registration_requested','Kirish so‘rovi' FROM registered RETURNING user_id) SELECT id FROM registered",[email,name,passwordHash(p)]);
  res.json({ok:true,message:'So‘rov ko‘rib chiqiladi. Yangi emailingiz bo‘lsa, u admin panelda kutilayotgan so‘rovlar ro‘yxatida ko‘rinadi. Oldin hisob ochilgan bo‘lsa, admin bilan bog‘laning.'});
+ // The registration response never waits for an external notification.
+ if(r.rowCount)void telegramNotify('🔔 ATT2026: yangi kirish so‘rovi!\nAdmin panelda tasdiqlash kutilmoqda.\n'+TELEGRAM_ADMIN_URL).catch(()=>console.warn('Telegram notification failed; registration saved'));
 }));
 function deviceLabel(ua){
  const s=String(ua||'');
