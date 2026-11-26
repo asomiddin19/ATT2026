@@ -8,22 +8,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #f7f9fc;
+    --paper: #f5f8fa;
     --paper-raised: #ffffff;
-    --line: #e4ecf3;
-    --line-strong: #c8d5e2;
-    --ink: #18324b;
-    --ink-soft: #4e6177;
-    --ink-faint: #7a8797;
-    --accent: #4e7fa8;
-    --accent-deep: #315b7d;
-    --accent-soft: #edf5fb;
-    --seal: #b8904c;
-    --seal-soft: #f7efe2;
-    --good: #3f8f6b;
-    --good-soft: #eef8f2;
-    --bad: #cc6b6b;
-    --bad-soft: #fcf0f0;
+    --line: #e1e9ed;
+    --line-strong: #c5d5dc;
+    --ink: #18354b;
+    --ink-soft: #526a7c;
+    --ink-faint: #788b98;
+    --accent: #438d9a;
+    --accent-deep: #286979;
+    --accent-soft: #eaf4f5;
+    --seal: #b58442;
+    --seal-soft: #faf3e8;
+    --good: #34816a;
+    --good-soft: #eaf5ef;
+    --bad: #c45d67;
+    --bad-soft: #fbefef;
     --radius-sm: 8px;
     --radius: 16px;
   }
@@ -181,32 +181,68 @@
 
   /* ============ LOGIN / AUTH ============ */
   .wrap{ max-width:1100px; padding:0 22px 90px; }
-  .auth-screen{ min-height:100vh; display:grid; place-items:center; padding:28px 0; }
-  .auth-card{ width:min(100%, 980px); display:grid; grid-template-columns:1.1fr .9fr; background:linear-gradient(135deg, #ffffff 0%, #f7fbff 100%); border:1px solid #e2ebf3; border-radius:24px; overflow:hidden; box-shadow:0 18px 46px rgba(18,48,79,.08); backdrop-filter:blur(16px); }
-  .auth-intro{ padding:42px 36px; background:linear-gradient(135deg, #f6f9fc 0%, #eef5fb 100%); color:#12304f; display:flex; flex-direction:column; justify-content:center; border-right:1px solid #e7eef5; }
-  .auth-badge{ display:inline-flex; width:max-content; padding:8px 14px; border-radius:999px; background:#ffffff; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; margin-bottom:22px; }
-  .auth-intro h1{ font-family:'Source Serif 4', serif; font-size:34px; line-height:1.12; margin:0 0 12px; }
-  .auth-intro p{ font-size:15px; line-height:1.7; margin:0; opacity:.92; }
-  .auth-list{ list-style:none; padding:0; margin:24px 0 0; display:grid; gap:10px; }
-  .auth-list li{ display:flex; align-items:center; gap:10px; background:#ffffff; padding:10px 12px; border-radius:10px; font-size:13px; }
-  .auth-list li::before{ content:'✓'; font-weight:700; color:#2f89c7; }
-  .auth-form{ padding:36px 34px; display:flex; flex-direction:column; justify-content:center; background:#fcfdff; }
-  .auth-form h2{ font-family:'Source Serif 4', serif; font-size:24px; margin:8px 0 6px; color:#12304f; }
-  .auth-form .sub{ color:#51657d; font-size:13px; margin:0 0 20px; }
-  .auth-field{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
-  .auth-field label{ font-size:12.5px; font-weight:600; color:#7d8fa2; text-transform:uppercase; letter-spacing:.08em; }
-  .auth-field input{ background:#f9fcff; border:1px solid #dce8f0; border-radius:12px; padding:13px 14px; font-size:14px; color:#12304f; outline:none; transition:border-color .2s ease, box-shadow .2s ease; caret-color:#4e7fa8; }
-  .auth-field input::placeholder{ color:#7a8797; } .password-toggle{align-self:flex-end;border:0;background:transparent;color:#315b7d;text-decoration:underline;cursor:pointer;font:inherit;font-size:13px;padding:4px 0;} .password-toggle:focus-visible{outline:2px solid #4e7fa8;}
-  .auth-field input:focus{ border-color:#4e7fa8; box-shadow:0 0 0 4px rgba(78,127,168,.12); }
-  .auth-btn{ width:100%; padding:13px 16px; border-radius:12px; margin-top:6px; }
-  .auth-error{ min-height:18px; margin-top:10px; color:#ef5d5d; font-size:12.5px; font-weight:600; }
+  .auth-screen{ min-height:100vh; display:grid; place-items:center; padding:36px 0; }
+  .auth-card{ width:min(100%, 1040px); display:grid; grid-template-columns:1.05fr .95fr; background:#fff; border:1px solid rgba(255,255,255,.72); border-radius:28px; overflow:hidden; box-shadow:0 32px 90px rgba(15,35,65,.2); }
+  .auth-intro{ position:relative; isolation:isolate; overflow:hidden; padding:58px 48px; background:radial-gradient(ellipse at 18% 8%, rgba(86,166,224,.34), transparent 38%), linear-gradient(145deg, #10243d 0%, #173c60 58%, #1d5876 100%); color:#f5f9ff; display:flex; flex-direction:column; justify-content:center; }
+  .auth-intro::after{ content:""; position:absolute; z-index:-1; width:380px; height:380px; right:-185px; bottom:-220px; border:1px solid rgba(255,255,255,.12); border-radius:50%; box-shadow:0 0 0 32px rgba(255,255,255,.035), 0 0 0 72px rgba(255,255,255,.025); }
+  .auth-badge{ display:inline-flex; width:max-content; padding:8px 13px; border:1px solid rgba(255,255,255,.2); border-radius:999px; background:rgba(255,255,255,.09); color:#dcecff; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; margin-bottom:26px; }
+  .auth-intro h1{ max-width:440px; font-family:'Source Serif 4', serif; font-size:clamp(34px, 4vw, 46px); line-height:1.08; letter-spacing:-.025em; margin:0 0 16px; }
+  .auth-intro p{ max-width:450px; color:#d3e2f0; font-size:14.5px; line-height:1.8; margin:0; }
+  .auth-list{ list-style:none; padding:0; margin:30px 0 0; display:grid; gap:11px; }
+  .auth-list li{ display:flex; align-items:center; gap:11px; color:#edf5fc; font-size:13px; }
+  .auth-list li::before{ content:'✓'; width:23px; height:23px; flex:none; display:grid; place-items:center; border-radius:50%; background:rgba(132,207,181,.16); color:#9ce3c4; font-weight:700; }
+  .auth-form{ padding:54px 48px; display:flex; flex-direction:column; justify-content:center; background:#fff; }
+  .auth-form .eyebrow{ color:#4386ae; margin-bottom:8px; }
+  .auth-form h2{ font-family:'Source Serif 4', serif; font-size:30px; letter-spacing:-.02em; margin:0 0 8px; color:#172f4a; }
+  .auth-form .sub{ color:#687b90; font-size:13px; line-height:1.65; margin:0 0 27px; }
+  .auth-field{ display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
+  .auth-field label{ font-size:12px; font-weight:600; color:#52677d; letter-spacing:.02em; }
+  .auth-field input{ width:100%; min-height:50px; background:#f8fafc; border:1px solid #dce5ee; border-radius:12px; padding:13px 14px; font:500 14px 'IBM Plex Sans', sans-serif; color:#172f4a; outline:none; transition:border-color .2s ease, box-shadow .2s ease, background .2s ease; caret-color:#367ba4; }
+  .auth-field input::placeholder{ color:#718397; opacity:1; }
+  .auth-field input:focus{ background:#fff; border-color:#4386ae; box-shadow:0 0 0 4px rgba(67,134,174,.13); }
+  .password-wrap{ position:relative; }
+  .password-wrap input{ padding-right:92px; }
+  .password-toggle{ position:absolute; top:50%; right:8px; transform:translateY(-50%); border:0; border-radius:8px; padding:7px 9px; background:transparent; color:#52718b; font:600 11px 'IBM Plex Sans',sans-serif; cursor:pointer; }
+  .password-toggle:hover{ background:#eaf2f8; color:#214b6c; }
+  .auth-btn{ width:100%; min-height:50px; padding:13px 16px; border-radius:12px; margin-top:4px; background:linear-gradient(135deg, #1d4264, #347fa5); box-shadow:0 10px 20px rgba(35,91,127,.2); }
+  .auth-btn:hover{ box-shadow:0 14px 26px rgba(35,91,127,.28); }
+  .auth-btn:disabled{ opacity:.65; cursor:wait; transform:none; }
+  .auth-error{ min-height:18px; margin:12px 0 8px; color:#bf4148; font-size:12.5px; font-weight:600; line-height:1.5; }
+  .auth-register{ width:100%; min-height:44px; margin-top:5px; border:1px solid #e2eaf1; border-radius:11px; background:#fff; color:#3e607b; font-size:13px; }
+  .auth-register:hover{ border-color:#b9cddd; background:#f8fbfd; }
+  .auth-field input:focus-visible, .password-toggle:focus-visible, .btn:focus-visible, .tab:focus-visible{ outline:3px solid rgba(67,134,174,.35); outline-offset:2px; }
+  #registration{ max-height:calc(100vh - 32px); overflow:auto; color:#172f4a; box-shadow:0 28px 80px rgba(8,24,43,.26); }
+  #registration::backdrop{ background:rgba(13,29,47,.56); backdrop-filter:blur(4px); }
+  #registration h2{ font-family:'Source Serif 4',serif; font-size:25px; margin:0 0 16px; }
+  #registration form>p{ color:#63788d; font-size:13px; line-height:1.65; }
+  #registration form>label{ display:flex; align-items:flex-start; gap:9px; color:#435c73; font-size:13px; line-height:1.5; margin:14px 0; }
+  #registration form>label input{ width:17px; height:17px; flex:none; margin:1px 0 0; accent-color:#347fa5; }
+  #register-status{ min-height:1em; color:#347453; font-size:13px; line-height:1.5; }
+  #registration form>.btn{ margin-top:5px; }
   .letterhead{ margin-top:24px; border-radius:20px; padding:38px 34px 32px; background:linear-gradient(135deg, #ffffff 0%, #f7fbff 100%); border:1px solid #e2ebf3; box-shadow:0 12px 28px rgba(18,48,79,.06); }
   .ticket{ box-shadow:0 8px 18px -16px rgba(18,48,79,.12); }
   .board{ background:#ffffff; border:1px solid #e2ebf3; border-radius:18px; padding:24px 24px 8px; box-shadow:0 10px 24px -20px rgba(18,48,79,.1); }
   .q-card{ box-shadow:0 16px 36px -24px rgba(18,48,79,.16); }
   .result-hero{ box-shadow:0 18px 40px -24px rgba(18,48,79,.16); }
-  @media (max-width:780px){ .auth-card{ grid-template-columns:1fr; } .auth-intro{ padding:28px 24px; border-right:none; border-bottom:1px solid #e7eef5; } .auth-form{ padding:24px 22px 28px; } .wrap{ padding:0 14px 70px; } .letterhead{ padding:28px 20px 24px; } .tabs{ flex-wrap:wrap; border-radius:20px; } .tab{ flex:1 1 calc(50% - 8px); text-align:center; } .ticket{ grid-template-columns:1fr; gap:10px; } .ticket-num{ border-right:none; border-bottom:1px dashed #dce8f0; padding-right:0; padding-bottom:8px; } .ticket-side{ align-items:flex-start; } .support-grid{ grid-template-columns:1fr; } }
+  @media (max-width:780px){ .auth-screen{ padding:18px 0; } .auth-card{ grid-template-columns:1fr; border-radius:22px; } .auth-intro{ padding:34px 28px; } .auth-intro::after{ width:300px; height:300px; right:-190px; bottom:-210px; } .auth-list{ margin-top:22px; grid-template-columns:1fr 1fr; gap:10px 16px; } .auth-list li{ align-items:flex-start; font-size:12px; } .auth-form{ padding:34px 28px 30px; } .wrap{ padding:0 14px 70px; } .letterhead{ padding:28px 20px 24px; } .tabs{ flex-wrap:wrap; border-radius:20px; } .tab{ flex:1 1 calc(50% - 8px); text-align:center; } .ticket{ grid-template-columns:1fr; gap:10px; } .ticket-num{ border-right:none; border-bottom:1px dashed #dce8f0; padding-right:0; padding-bottom:8px; } .ticket-side{ align-items:flex-start; } .support-grid{ grid-template-columns:1fr; } }
+  @media (max-width:480px){ .auth-list{ grid-template-columns:1fr; } .auth-intro{ padding:30px 22px; } .auth-form{ padding:30px 22px 26px; } }
 
+  body{ background:radial-gradient(ellipse at 12% 0%, rgba(213,231,243,.72), transparent 34%), linear-gradient(145deg, #f5f8fb 0%, #eef3f8 55%, #f7f9fc 100%); color:#172f4a; }
+  .letterhead{ border-color:#e1e9f0; background:linear-gradient(135deg, #fff 0%, #f4f8fc 100%); box-shadow:0 20px 50px -32px rgba(19,51,78,.28); }
+  .tabs{ border-color:rgba(220,231,239,.9); box-shadow:0 12px 28px -22px rgba(19,51,78,.3); }
+  .tab{ font-family:'IBM Plex Sans',sans-serif; font-size:13px; text-transform:none; letter-spacing:0; }
+  .tab.active{ color:#fff; background:linear-gradient(135deg, #1d4264, #347fa5); box-shadow:0 6px 14px rgba(35,91,127,.2); }
+  .ticket{ border-color:#e4ebf1; box-shadow:0 8px 24px -20px rgba(19,51,78,.35); }
+  .ticket:hover{ border-color:#83afc8; box-shadow:0 16px 30px -20px rgba(35,91,127,.28); }
+  .btn-start{ border-radius:10px; box-shadow:0 7px 16px rgba(35,91,127,.18); }
+  .board{ border-color:#e2eaf1; box-shadow:0 16px 36px -28px rgba(19,51,78,.32); }
+  .user-bar{ display:flex; align-items:center; justify-content:flex-end; gap:12px; min-height:62px; padding:8px 4px; color:#52677d; font-size:13px; }
+  .user-info{ margin-right:auto; font-weight:600; color:#294761; }
+  .user-bar a{ font-size:13px; font-weight:600; text-decoration:none; }
+  .user-bar a:hover{ text-decoration:underline; }
+  .user-bar .btn{ border:1px solid #dce6ee; background:rgba(255,255,255,.76); padding:9px 14px; color:#435d75; font-size:12px; }
+  .user-bar .btn:hover{ border-color:#b9cddd; background:#fff; }
+  .ticket, .support-card, .tab, .btn, .btn-start{ transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease; }
   /* ============ QUIZ SCREEN ============ */
   .quiz-shell{ padding-top:36px; }
   .quiz-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; }
@@ -323,6 +359,100 @@
     .letterhead{ padding-top:34px; }
     .stat-row{ gap:26px; }
   }
+  .quiz-shell{ max-width:860px; margin:0 auto; padding-top:24px; }
+  .quiz-topbar{ padding:13px 16px; margin-bottom:30px; border:1px solid #e1e9f0; border-radius:15px; background:rgba(255,255,255,.82); box-shadow:0 10px 28px -24px rgba(19,51,78,.32); }
+  .back-btn{ font-family:'IBM Plex Sans',sans-serif; font-size:13px; letter-spacing:0; }
+  .clock{ min-width:90px; justify-content:center; border:1px solid #dce8f0; border-radius:999px; padding:8px 14px; background:#fff; box-shadow:0 4px 12px rgba(19,51,78,.06); }
+  .clock-dot{ box-shadow:0 0 0 4px rgba(63,143,107,.12); }
+  .clock-dot.warn{ box-shadow:0 0 0 4px rgba(204,107,107,.13); }
+  .quiz-title-row{ margin-bottom:16px; }
+  .quiz-title-row h2{ font-size:clamp(24px, 4vw, 32px); letter-spacing:-.02em; }
+  .quiz-title-row p{ line-height:1.6; }
+  .note-box{ border-radius:12px; }
+  .progress-track{ height:7px; margin-top:24px; background:#e4ecf2; }
+  .progress-fill{ border-radius:99px; background:linear-gradient(90deg, #347fa5, #59a8bc); }
+  .progress-info{ margin:10px 2px 18px; font-size:12px; }
+  .q-card{ padding:clamp(22px, 5vw, 38px); border-color:#e3eaf0; border-radius:22px; box-shadow:0 24px 60px -42px rgba(19,51,78,.35); }
+  .q-num-chip{ padding:7px 12px; margin-bottom:20px; border:1px solid #dbe8f0; }
+  .q-text{ font-size:clamp(19px, 3vw, 23px); line-height:1.55; margin-bottom:28px; }
+  .options{ gap:12px; }
+  .opt{ min-height:58px; border-color:#e1e8ef; border-radius:13px; padding:14px 16px; line-height:1.5; }
+  .opt:hover{ border-color:#8fb4c9; box-shadow:0 7px 18px -16px rgba(35,91,127,.55); }
+  .opt .lab{ width:30px; height:30px; border-radius:9px; }
+  .opt.correct{ box-shadow:0 0 0 3px rgba(63,143,107,.09); }
+  .opt.wrong{ box-shadow:0 0 0 3px rgba(204,107,107,.09); }
+  .feedback-line{ min-height:22px; margin-top:18px; }
+  .nav-row{ padding:4px 2px; }
+  .nav-row .btn{ min-height:46px; border-radius:12px; }
+  .nav-row .btn-ghost{ padding-left:8px; padding-right:8px; }
+  .result-hero{ overflow:hidden; border:1px solid #dfe8ef; border-radius:24px; padding:clamp(30px, 6vw, 52px) 28px; background:radial-gradient(ellipse at 50% 0%, #edf6fb 0%, #fff 62%); box-shadow:0 24px 60px -40px rgba(19,51,78,.36); }
+  .result-seal{ border-color:#347fa5; background:rgba(255,255,255,.8); box-shadow:0 10px 28px -18px rgba(35,91,127,.45); }
+  .result-seal::before{ border-color:#b9d1df; }
+  .result-seal .big{ color:#1d4264; }
+  .result-hero h2{ font-size:clamp(23px, 4vw, 30px); }
+  .review-title{ font-size:21px; margin-top:36px; }
+  .review-item{ border-color:#e3eaf0; border-radius:14px; padding:18px; box-shadow:0 8px 24px -24px rgba(19,51,78,.35); }
+  .review-item .rq{ font-size:14px; line-height:1.55; }
+  .review-item .ans-line{ padding-left:30px; line-height:1.65; }
+  @media (prefers-reduced-motion:reduce){ *, *::before, *::after{ scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } }
+  @media (max-width:560px){ .quiz-shell{ padding-top:14px; } .quiz-topbar{ margin-bottom:24px; } .progress-info{ margin-bottom:14px; } .nav-row .btn{ padding:11px 14px; } .result-actions{ gap:8px; } .review-item{ padding:15px; } }
+  :root{ --brand-navy:#15344b; --brand-teal:#2f8290; --brand-teal-deep:#246a78; --brand-mint:#eaf4f3; --brand-gold:#bc8a49; --brand-gold-soft:#faf4ea; }
+  a{ color:var(--brand-teal-deep); }
+  body{ background:radial-gradient(ellipse at 12% 0%, rgba(210,232,230,.65), transparent 34%), linear-gradient(145deg,#f6f9fa 0%,#edf4f5 55%,#f8f9f8 100%); color:var(--brand-navy); }
+  .wrap::before{ background:rgba(88,158,159,.13); }
+  .wrap::after{ background:rgba(245,231,207,.32); }
+  .letterhead{ border-top:3px solid var(--brand-teal); background:linear-gradient(135deg,#fff 0%,#f3f8f7 100%); }
+  .crest{ border-color:#dbe9e6; color:var(--brand-navy); background:linear-gradient(135deg,#f4f9f7,#e5f1ef); }
+  .eyebrow{ color:var(--brand-teal-deep); }
+  h1.hero em{ color:var(--brand-teal); }
+  .hero-pill{ background:#f4f8f6; border-color:#dfeae6; }
+  .hero-pill::before{ color:var(--brand-teal); }
+  .stat .num{ color:var(--brand-navy); }
+  .tabs{ border-color:#dce8e7; }
+  .tab:hover{ color:var(--brand-navy); background:#f0f7f5; }
+  .tab.active{ background:linear-gradient(135deg,var(--brand-navy),var(--brand-teal)); }
+  .section-num{ color:var(--brand-teal-deep); }
+  .section-title{ color:var(--brand-navy); }
+  .ticket{ border-color:#e0e9e9; background:linear-gradient(135deg,#fff 0%,#f7faf9 100%); }
+  .ticket:hover{ border-color:#91bdb9; box-shadow:0 16px 30px -20px rgba(36,106,120,.32); }
+  .ticket:hover .ticket-num{ color:var(--brand-teal-deep); }
+  .ticket-body h3{ color:var(--brand-navy); }
+  .seal{ border-color:var(--brand-gold); color:#91662f; background:var(--brand-gold-soft); transform:none; }
+  .seal.good{ border-color:#9ac8b5; color:#246a55; background:#edf7f1; }
+  .seal.mid{ border-color:#e4c995; color:#8d642d; background:#fbf5e9; }
+  .seal.low{ border-color:#e5b7ba; color:#a74650; background:#fcf1f1; }
+  .seal.empty{ border-color:#dbe5e8; color:#71858f; background:#f4f7f8; }
+  .btn-start,.btn-primary{ background:linear-gradient(135deg,var(--brand-navy),var(--brand-teal)); }
+  .btn-start{ box-shadow:0 7px 16px rgba(36,106,120,.19); }
+  .btn-start:hover,.btn-primary:hover{ box-shadow:0 12px 24px -12px rgba(36,106,120,.42); }
+  .board{ border-top:3px solid var(--brand-gold); background:linear-gradient(180deg,#fff,#fcfbf8); }
+  .board-title{ color:var(--brand-navy); }
+  .support-chip{ border-color:#eadfc9; background:linear-gradient(135deg,#f1f7f5,#fbf5e9); color:var(--brand-teal-deep); }
+  .support-icon{ background:linear-gradient(135deg,#e8f3f1,#f8f0e2); color:var(--brand-teal-deep); }
+  .support-card:hover{ border-color:#90bcb9; }
+  .quiz-topbar{ border-color:#dce8e7; background:rgba(255,255,255,.88); }
+  .clock{ border-color:#dae7e5; }
+  .clock-dot{ box-shadow:0 0 0 4px rgba(52,129,106,.13); }
+  .progress-track{ background:#e2ece9; }
+  .progress-fill{ background:linear-gradient(90deg,var(--brand-teal-deep),#65ae9c); }
+  .q-num-chip{ border-color:#d9e8e5; color:var(--brand-teal-deep); background:var(--brand-mint); }
+  .opt:hover{ border-color:#83b5b0; background:#f0f7f5; }
+  .opt.selected{ border-color:var(--brand-teal); background:#eaf4f3; }
+  .opt.correct{ border-color:var(--good); background:var(--good-soft); }
+  .opt.wrong{ border-color:var(--bad); background:var(--bad-soft); }
+  .result-hero{ background:radial-gradient(ellipse at 50% 0%,#e9f4f1 0%,#fff 64%); }
+  .result-seal{ border-color:var(--brand-teal); }
+  .result-seal .big{ color:var(--brand-navy); }
+  .review-item .rq .tag.ok{ background:var(--good); }
+  .review-item .rq .tag.no{ background:var(--bad); }
+  .auth-intro{ background:radial-gradient(ellipse at 18% 8%,rgba(83,166,165,.34),transparent 38%),linear-gradient(145deg,#132c43 0%,#174b60 58%,#206c75 100%); }
+  .auth-badge{ border-color:rgba(187,218,206,.23); color:#e4f2e9; }
+  .auth-list li::before{ background:rgba(124,198,161,.18); color:#a7e0bb; }
+  .auth-form .eyebrow{ color:var(--brand-teal-deep); }
+  .auth-field input:focus{ border-color:var(--brand-teal); box-shadow:0 0 0 4px rgba(47,130,144,.13); }
+  .password-toggle:hover{ background:#eaf4f2; color:var(--brand-teal-deep); }
+  .auth-btn{ background:linear-gradient(135deg,var(--brand-navy),var(--brand-teal)); box-shadow:0 10px 20px rgba(36,106,120,.2); }
+  #registration form>label input{ accent-color:var(--brand-teal); }
 </style>
 </head>
 <body>
@@ -346,16 +476,22 @@
         <p class="eyebrow">Kirish</p>
         <h2>Hisobga kirish</h2>
         <p class="sub">Admin bergan email va parol bilan kiring. Test natijalari, kirish va sayt ichidagi faoliyat tarixi serverda saqlanadi. Qurilma soni brauzer profillari asosida hisoblanadi.</p>
-        <div class="auth-field">
-          <label for="login-input">Email</label>
-          <input id="login-input" type="email" inputmode="email" autocomplete="username" spellcheck="false" placeholder="Email manzilingiz">
-        </div>
-        <div class="auth-field">
-          <label for="password-input">Parol</label>
-          <input id="password-input" type="password" inputmode="text" autocomplete="current-password" spellcheck="false" placeholder="Parolingiz"><button type="button" class="password-toggle" aria-controls="password-input" aria-pressed="false" onclick="togglePassword('password-input',this)">Parolni ko‘rsatish</button>
-        </div>
-        <button class="btn btn-primary auth-btn" onclick="handleLogin()">Kirish</button>
-        <p class="auth-error" id="auth-error"></p><button class="btn" type="button" onclick="document.getElementById('registration').showModal()">Kirish uchun ro‘yxatdan o‘tish</button>
+        <form id="login-form">
+          <div class="auth-field">
+            <label for="login-input">Email manzilingiz</label>
+            <input id="login-input" name="email" type="email" inputmode="email" autocomplete="username" spellcheck="false" placeholder="ism@example.com" required>
+          </div>
+          <div class="auth-field">
+            <label for="password-input">Parol</label>
+            <div class="password-wrap">
+              <input id="password-input" name="password" type="password" autocomplete="current-password" spellcheck="false" placeholder="Parolingizni kiriting" required>
+              <button class="password-toggle" id="password-toggle" type="button" aria-controls="password-input" aria-pressed="false">Ko‘rsatish</button>
+            </div>
+          </div>
+          <button class="btn btn-primary auth-btn" id="login-button" type="submit">Kirish</button>
+          <p class="auth-error" id="auth-error" role="status" aria-live="polite"></p>
+        </form>
+        <button class="btn auth-register" type="button" onclick="document.getElementById('registration').showModal()">Kirish uchun ro‘yxatdan o‘tish</button>
       </div>
     </div>
   </section>
@@ -363,7 +499,8 @@
   <!-- ============ HOME SCREEN ============ -->
   <section id="home-screen" class="hidden">
 
-    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px"><span id="current-user"></span><a id="admin-link" href="/admin" hidden>Admin panel</a><button class="btn" onclick="logout()">Chiqish</button></div><header class="letterhead">
+    <div class="user-bar"><span class="user-info" id="current-user"></span><a id="admin-link" href="/admin" hidden>Admin panel</a><button class="btn" onclick="logout()">Chiqish</button></div>
+    <header class="letterhead">
       <div class="lh-top">
         <div class="crest">A·26</div>
         <div class="lh-meta">INFORMATIKA FANI<br>TEST MARKAZI</div>
@@ -623,11 +760,17 @@ renderHome();
 showScreen('auth-screen');
 api('/api/me').then(enterPlatform).catch(()=>{});
 
-document.getElementById('login-input').addEventListener('keydown', (e) => {
-  if(e.key === 'Enter') handleLogin();
+document.getElementById('login-form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  handleLogin();
 });
-document.getElementById('password-input').addEventListener('keydown', (e) => {
-  if(e.key === 'Enter') handleLogin();
+document.getElementById('password-toggle').addEventListener('click', (event) => {
+  const input = document.getElementById('password-input');
+  const button = event.currentTarget;
+  const isVisible = input.type === 'text';
+  input.type = isVisible ? 'password' : 'text';
+  button.textContent = isVisible ? 'Ko‘rsatish' : 'Yashirish';
+  button.setAttribute('aria-pressed', String(!isVisible));
 });
 
 /* =========================================================
@@ -642,9 +785,27 @@ let timeLeft = 120;
 const TIME_LIMIT = 120;
 
 async function handleLogin(){
- const email=document.getElementById('login-input').value.trim(),password=document.getElementById('password-input').value;
- const err=document.getElementById('auth-error');err.textContent='Kirilmoqda…';
- try{const user=await api('/api/login','POST',{email,password});document.getElementById('password-input').value='';await enterPlatform(user);err.textContent='';}catch(e){err.textContent=e.message;}
+  const form = document.getElementById('login-form');
+  if(!form.reportValidity()) return;
+  const email = document.getElementById('login-input').value.trim();
+  const passwordInput = document.getElementById('password-input');
+  const err = document.getElementById('auth-error');
+  const button = document.getElementById('login-button');
+  err.textContent = 'Kirilmoqda…';
+  button.disabled = true;
+  try{
+    const user = await api('/api/login', 'POST', {email, password:passwordInput.value});
+    passwordInput.value = '';
+    passwordInput.type = 'password';
+    document.getElementById('password-toggle').textContent = 'Ko‘rsatish';
+    document.getElementById('password-toggle').setAttribute('aria-pressed','false');
+    await enterPlatform(user);
+    err.textContent = '';
+  }catch(e){
+    err.textContent = e.message;
+  }finally{
+    button.disabled = false;
+  }
 }
 
 function showScreen(id){
@@ -837,7 +998,7 @@ function retryQuiz(){
 }
 </script>
 <script src="./main.js"></script>
-<dialog id="registration" style="max-width:440px;width:92%;border:1px solid #c8d5e2;border-radius:14px;padding:24px"><h2>Kirish so‘rovi</h2><form id="registration-form"><div class="auth-field"><label>Ism-familiya</label><input name="name" required maxlength="120"></div><div class="auth-field"><label>Email</label><input name="email" type="email" required></div><div class="auth-field"><label>Parol (12+ belgi)</label><input id="registration-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><button type="button" class="password-toggle" aria-controls="registration-password" aria-pressed="false" onclick="togglePassword('registration-password',this)">Parolni ko‘rsatish</button></div><p>Admin email egasini tekshiradi va kirishni tasdiqlaydi. Kirish va test tarixi, brauzer profili va qurilma turi platformada saqlanadi; odatda 2 ta faol brauzer profiliga ruxsat beriladi.</p><label><input name="consent" type="checkbox" required> Mazkur ma’lumotlar qayd etilishiga roziman.</label><p id="register-status" role="status"></p><button class="btn btn-primary">So‘rov yuborish</button> <button class="btn" type="button" onclick="document.getElementById('registration').close()">Yopish</button></form></dialog><script>
+<dialog id="registration" style="max-width:440px;width:92%;border:1px solid #c8d5e2;border-radius:14px;padding:24px"><h2>Kirish so‘rovi</h2><form id="registration-form"><div class="auth-field"><label>Ism-familiya</label><input name="name" required maxlength="120"></div><div class="auth-field"><label>Email</label><input name="email" type="email" required></div><div class="auth-field"><label>Parol (12+ belgi)</label><div class="password-wrap"><input id="registration-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><button type="button" class="password-toggle" aria-controls="registration-password" aria-pressed="false" onclick="togglePassword('registration-password',this)">Parolni ko‘rsatish</button></div></div><p>Admin email egasini tekshiradi va kirishni tasdiqlaydi. Kirish va test tarixi, brauzer profili va qurilma turi platformada saqlanadi; odatda 2 ta faol brauzer profiliga ruxsat beriladi.</p><label><input name="consent" type="checkbox" required> Mazkur ma’lumotlar qayd etilishiga roziman.</label><p id="register-status" role="status"></p><button class="btn btn-primary">So‘rov yuborish</button> <button class="btn" type="button" onclick="document.getElementById('registration').close()">Yopish</button></form></dialog><script>
 document.getElementById('registration-form').addEventListener('submit',async e=>{e.preventDefault();const form=e.target,data=Object.fromEntries(new FormData(form));data.consent=form.elements.consent.checked;const status=document.getElementById('register-status'),submit=form.querySelector('button:not([type=button])');if(submit.disabled)return;submit.disabled=true;status.textContent='So‘rov yuborilmoqda…';try{const r=await api('/api/register','POST',data);status.textContent=r.message;form.reset()}catch(err){status.textContent=err.message}finally{submit.disabled=false}});
 </script><script>
 function togglePassword(id,button){const field=document.getElementById(id),visible=field.type==='password';field.type=visible?'text':'password';button.textContent=visible?'Parolni yashirish':'Parolni ko‘rsatish';button.setAttribute('aria-pressed',String(visible));}
