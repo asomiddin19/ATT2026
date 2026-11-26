@@ -14,7 +14,7 @@ function rights(u){selectedAdmin=u;$('rights-title').textContent=u.email+' · ru
 $('cancel-rights').onclick=()=>$('rights').close();$('rights-form').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/users/'+selectedAdmin.id,'PATCH',{permissions:selected('edit-rights')});$('rights').close();await refresh()}catch(e){err(e)}};
 const fmt=x=>x?new Date(x).toLocaleString('uz-UZ'):'—';
 function el(tag,text){const n=document.createElement(tag);n.textContent=text;return n}
-async function api(path,method='GET',body){const r=await fetch(path,{method,headers:{'Content-Type':'application/json','X-ATT-Request':'1'},...(body===undefined?{}:{body:JSON.stringify(body)})});const result=await r.json();if(!r.ok)throw Error(result.error||'Server xatosi');return result}
+async function api(path,method='GET',body){const r=await fetch(path,{method,headers:{'Content-Type':'application/json','X-ATT-Request':'1'},...(body===undefined?{}:{body:JSON.stringify(body)})});if(!(r.headers.get('content-type')||'').includes('application/json'))throw Error('Server vaqtincha javob bermadi (HTTP '+r.status+'). Qayta urinib ko‘ring.');const result=await r.json();if(!r.ok)throw Error(result.error||'Server xatosi');return result}
 function err(e){$('error').textContent=e.message}
 function btn(label,fn,cls='secondary'){const b=el('button',label);b.className=cls;b.onclick=()=>Promise.resolve(fn()).catch(err);return b}
 function render(){
